@@ -41,11 +41,11 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-//import cn.finalteam.rxgalleryfinal.RxGalleryFinal;
-//import cn.finalteam.rxgalleryfinal.bean.MediaBean;
-//import cn.finalteam.rxgalleryfinal.imageloader.ImageLoaderType;
-//import cn.finalteam.rxgalleryfinal.rxbus.RxBusResultSubscriber;
-//import cn.finalteam.rxgalleryfinal.rxbus.event.ImageMultipleResultEvent;
+import cn.finalteam.rxgalleryfinal.RxGalleryFinal;
+import cn.finalteam.rxgalleryfinal.bean.MediaBean;
+import cn.finalteam.rxgalleryfinal.imageloader.ImageLoaderType;
+import cn.finalteam.rxgalleryfinal.rxbus.RxBusResultSubscriber;
+import cn.finalteam.rxgalleryfinal.rxbus.event.ImageMultipleResultEvent;
 
 public class JingqHandleActivity extends BaseActivity implements IJingqhandleView {
 
@@ -472,32 +472,31 @@ public class JingqHandleActivity extends BaseActivity implements IJingqhandleVie
             case R.id.tv_add_media:
                 ToastTool.getInstance().shortLength(context, "添加图片", true);
                 //==========================
-                //以下是rxGalleryFinal写法,但是引入此模块会导致地图无法加载,故舍弃.
-//                RxGalleryFinal
-//                        .with(JingqHandleActivity.this)
-//                        .image()
-//                        .multiple()
-//                        .maxSize(8)
-//                        .imageLoader(ImageLoaderType.GLIDE)
-//                        .subscribe(new RxBusResultSubscriber<ImageMultipleResultEvent>() {
-//                            @Override
-//                            protected void onEvent(ImageMultipleResultEvent imageMultipleResultEvent) throws Exception {
-//                                List<MediaBean> medias = imageMultipleResultEvent.getResult();
-//                                StringBuffer sb = new StringBuffer();
-//                                imageDatas.clear();
-//                                for (MediaBean bean : medias) {
-//                                    String filePath = bean.getOriginalPath();
-//                                    sb.append(filePath + ",");
-//                                    imageDatas.add(filePath);
-//                                }
-//                                entityJingq.setFilesPath(sb.toString());
-//                                adapterImages.notifyDataSetChanged();
-//                                Toast.makeText(getBaseContext(), "已选择" + sb.toString() + "张图片", Toast.LENGTH_SHORT).show();
-//
-//
-//                            }
-//                        })
-//                        .openGallery();
+                RxGalleryFinal
+                        .with(JingqHandleActivity.this)
+                        .image()
+                        .multiple()
+                        .maxSize(8)
+                        .imageLoader(ImageLoaderType.GLIDE)
+                        .subscribe(new RxBusResultSubscriber<ImageMultipleResultEvent>() {
+                            @Override
+                            protected void onEvent(ImageMultipleResultEvent imageMultipleResultEvent) throws Exception {
+                                List<MediaBean> medias = imageMultipleResultEvent.getResult();
+                                StringBuffer sb = new StringBuffer();
+                                imageDatas.clear();
+                                for (MediaBean bean : medias) {
+                                    String filePath = bean.getOriginalPath();
+                                    sb.append(filePath + ",");
+                                    imageDatas.add(filePath);
+                                }
+                                entityJingq.setFilesPath(sb.toString());
+                                adapterImages.notifyDataSetChanged();
+                                Toast.makeText(getBaseContext(), "已选择" + sb.toString() + "张图片", Toast.LENGTH_SHORT).show();
+
+
+                            }
+                        })
+                        .openGallery();
                 //==========================
 
                 break;

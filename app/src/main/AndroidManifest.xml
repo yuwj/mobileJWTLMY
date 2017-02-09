@@ -144,7 +144,17 @@
             android:name=".view.impl.JingqImageEditActivity"
             android:theme="@style/CollapsingToolbarTheme"
             android:launchMode="singleTask" />
-
+        <!-- rxgalleryfinal 图片选择界面 -->
+        <activity
+            android:name="cn.finalteam.rxgalleryfinal.ui.activity.MediaActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/CollapsingToolbarTheme"
+            android:exported="true"/>
+        <!-- rxgalleryfinal 图片裁剪页面 -->
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:theme="@style/CollapsingToolbarTheme"
+            android:screenOrientation="portrait"/>
         <service
             android:name=".service.GPSService"
             android:enabled="true"
