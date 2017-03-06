@@ -9,6 +9,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -67,13 +68,28 @@ public class XunlpcRycxlistActivity extends BaseActivity {
         //假数据
         EntityXunlpcRYXX entityXunlpcRYXX = new EntityXunlpcRYXX();
         entityXunlpcRYXX.setName("哈登");
+        entityXunlpcRYXX.setSex("男");
+        entityXunlpcRYXX.setNation("汉族");
+        entityXunlpcRYXX.setBirthday("1987-02-28");
+        entityXunlpcRYXX.setHuji("哈乐街99号11楼209号");
+        entityXunlpcRYXX.setJiguan("湖北武汉");
+        entityXunlpcRYXX.setXueli("本科");
+        entityXunlpcRYXX.setHunyin("未婚");
         entityXunlpcRYXX.setAddress("武汉市关山大道598号中地数码科技园");
         entityXunlpcRYXX.setSfzh("420205198622738476");
         EntityXunlpcRYXX entityXunlpcRYXX2 = new EntityXunlpcRYXX();
-        entityXunlpcRYXX.setName("戈登");
-        entityXunlpcRYXX.setAddress("德克萨斯州休斯敦丰田中心球馆");
-        entityXunlpcRYXX.setSfzh("420212332385729000");
+        entityXunlpcRYXX2.setName("戈登");
+        entityXunlpcRYXX2.setSex("男");
+        entityXunlpcRYXX2.setNation("哈萨克族");
+        entityXunlpcRYXX2.setBirthday("1988-08-28");
+        entityXunlpcRYXX2.setHuji("韧性之城24号44楼202号");
+        entityXunlpcRYXX2.setJiguan("德州休斯敦");
+        entityXunlpcRYXX2.setXueli("高中");
+        entityXunlpcRYXX2.setHunyin("已婚");
+        entityXunlpcRYXX2.setAddress("德克萨斯州休斯敦丰田中心球馆");
+        entityXunlpcRYXX2.setSfzh("420212332385729000");
         mDatas.add(entityXunlpcRYXX);
+        mDatas.add(entityXunlpcRYXX2);
         mDatas.add(entityXunlpcRYXX2);
         mDatas.add(entityXunlpcRYXX);
         mDatas.add(entityXunlpcRYXX);
@@ -86,36 +102,28 @@ public class XunlpcRycxlistActivity extends BaseActivity {
         adapterWangge = new CommonAdapter<EntityXunlpcRYXX>(this, R.layout.item_xunlpc_rycx_wangg, mDatas) {
             @Override
             protected void convert(ViewHolder holder, EntityXunlpcRYXX entityXunlpcRYXX, int position) {
-                holder.setText(R.id.tv_name, entityXunlpcRYXX.getName());
-                holder.setText(R.id.tv_address, entityXunlpcRYXX.getAddress());
-                holder.setText(R.id.tv_sfzh, entityXunlpcRYXX.getSfzh());
+                holder.setText(R.id.tv_name_wg, entityXunlpcRYXX.getName());
+                holder.setText(R.id.tv_address_wg, entityXunlpcRYXX.getAddress());
+                holder.setText(R.id.tv_sfzh_wg, entityXunlpcRYXX.getSfzh());
 
             }
 
-            @Override
-            public void convert(ViewHolder holder, EntityXunlpcRYXX entityXunlpcRYXX) {
-
-            }
         };
 
         adapterList = new CommonAdapter<EntityXunlpcRYXX>(this, R.layout.item_xunlpc_rycx_xianx, mDatas) {
             @Override
             protected void convert(ViewHolder holder, EntityXunlpcRYXX entityXunlpcRYXX, int position) {
-                holder.setText(R.id.tv_name, entityXunlpcRYXX.getName());
-                holder.setText(R.id.tv_address, entityXunlpcRYXX.getAddress());
-                holder.setText(R.id.tv_sfzh, entityXunlpcRYXX.getSfzh());
+                holder.setText(R.id.tv_name_xx, entityXunlpcRYXX.getName());
+                holder.setText(R.id.tv_address_xx, entityXunlpcRYXX.getAddress());
+                holder.setText(R.id.tv_sfzh_xx, entityXunlpcRYXX.getSfzh());
 
             }
 
-            @Override
-            public void convert(ViewHolder holder, EntityXunlpcRYXX entityXunlpcRYXX) {
-
-            }
         };
         adapterList.setOnItemClickListener(new MultiItemTypeAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, RecyclerView.ViewHolder holder, int position) {
-
+                XunlpcRYXXActivity.actionStart(XunlpcRycxlistActivity.this,mDatas.get(position-1));
             }
 
             @Override
@@ -149,6 +157,7 @@ public class XunlpcRycxlistActivity extends BaseActivity {
                 }, 2000);
             }
         });
+        adapterWangge.notifyDataSetChanged();
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         listView.setLayoutManager(linearLayoutManager);
