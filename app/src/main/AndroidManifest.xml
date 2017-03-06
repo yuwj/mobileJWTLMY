@@ -54,17 +54,7 @@
             android:theme="@style/CollapsingToolbarTheme">
         </activity>
         <activity
-            android:name=".view.impl.SearchActivityOld"
-            android:launchMode="singleTop"
-            android:theme="@style/CollapsingToolbarTheme">
-        </activity>
-        <activity
             android:name=".view.impl.ScrollActivityResult"
-            android:launchMode="singleTask"
-            android:theme="@style/CollapsingToolbarTheme">
-        </activity>
-        <activity
-            android:name=".view.impl.ScrollActivityResultOld"
             android:launchMode="singleTask"
             android:theme="@style/CollapsingToolbarTheme">
         </activity>
@@ -80,6 +70,18 @@
             ></activity>
         <activity
             android:name=".view.impl.SettingActivity"
+            android:launchMode="singleTask"
+            android:theme="@style/CollapsingToolbarTheme"
+            >
+        </activity>
+        <activity
+            android:name=".view.impl.XunlpcActivity"
+            android:launchMode="singleTask"
+            android:theme="@style/CollapsingToolbarTheme"
+            >
+        </activity>
+        <activity
+            android:name=".view.impl.XunlpcRycxlistActivity"
             android:launchMode="singleTask"
             android:theme="@style/CollapsingToolbarTheme"
             >
@@ -117,44 +119,34 @@
         <!-- 警情列表 -->
         <activity
             android:name=".view.impl.JingqListActivity"
-            android:theme="@style/CollapsingToolbarTheme"
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask"
+            android:theme="@style/CollapsingToolbarTheme"/>
         <!-- 未处理警情详情页 -->
         <activity
             android:name=".view.impl.JingqDetailWithUnhandleActivity"
-            android:theme="@style/CollapsingToolbarTheme"
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask"
+            android:theme="@style/CollapsingToolbarTheme"/>
         <!-- 已处理警情详情页 -->
         <activity
             android:name=".view.impl.JingqDetailWithHandledActivity"
-            android:theme="@style/CollapsingToolbarTheme"
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask"
+            android:theme="@style/CollapsingToolbarTheme"/>
         <!-- 警情处理页 -->
         <activity
             android:name=".view.impl.JingqHandleActivity"
-            android:theme="@style/CollapsingToolbarTheme"
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask"
+            android:theme="@style/CollapsingToolbarTheme"/>
         <!-- 搜索出来的未处理的警情详情页 -->
         <activity
             android:name=".view.impl.JingqDetailWithUnhandleActivityWithSearch"
-            android:theme="@style/CollapsingToolbarTheme"
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask"
+            android:theme="@style/CollapsingToolbarTheme"/>
         <!-- 警情处理时的图片编辑页面 -->
         <activity
             android:name=".view.impl.JingqImageEditActivity"
-            android:theme="@style/CollapsingToolbarTheme"
-            android:launchMode="singleTask" />
-        <!-- rxgalleryfinal 图片选择界面 -->
-        <activity
-            android:name="cn.finalteam.rxgalleryfinal.ui.activity.MediaActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/CollapsingToolbarTheme"
-            android:exported="true"/>
-        <!-- rxgalleryfinal 图片裁剪页面 -->
-        <activity
-            android:name="com.yalantis.ucrop.UCropActivity"
-            android:theme="@style/CollapsingToolbarTheme"
-            android:screenOrientation="portrait"/>
+            android:launchMode="singleTask"
+            android:theme="@style/CollapsingToolbarTheme"/>
+
         <service
             android:name=".service.GPSService"
             android:enabled="true"

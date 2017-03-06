@@ -21,4 +21,6 @@
     <color name="actionbar_color_gray">#CBCBCB</color> <!-- Color.rgb(0, 156, 131) -->
     <color name="actionbar_color_gray_deeper">#666666</color>
     <color name="partTranslucent">#39000000</color>
+    <color name="jingqclbg">#f3f3f3</color>
+
 </resources>

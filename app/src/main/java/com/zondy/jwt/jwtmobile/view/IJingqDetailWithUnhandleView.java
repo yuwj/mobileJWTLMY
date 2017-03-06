@@ -7,8 +7,8 @@ import com.zondy.jwt.jwtmobile.entity.EntityJingq;
  */
 
 public interface IJingqDetailWithUnhandleView {
-    public void reLoadJingqSuccess(EntityJingq jingq);
-    public void reLoadJIngqFalied(Exception e);
+//    public void reLoadJingqSuccess(EntityJingq jingq);
+//    public void reLoadJIngqFalied(Exception e);
     public void receiveJingqSuccess();
     public void receiveJIngqFalied(Exception e);
     public void arriveConfirmSuccess();

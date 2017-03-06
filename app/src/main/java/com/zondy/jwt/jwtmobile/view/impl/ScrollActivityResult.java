@@ -20,6 +20,7 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.yinglan.scrolllayout.ScrollLayout;
@@ -53,6 +54,7 @@ public class ScrollActivityResult extends BaseActivity implements ISearchZHCXLis
     MapView mapview;
     private ISearchPresenter searchPresenter = new SearchPresenterImpl(this, this);
     private double radius = 10;//半径，单位千米
+    private int allpages;//分页查询总页数
     private int nowpage = 1;//分页页码，首次查询为1
     private int pagesize = 10;//每页显示条数，默认为10
     private double longitude = 114.980164;//经度
@@ -354,6 +356,8 @@ public class ScrollActivityResult extends BaseActivity implements ISearchZHCXLis
                             return;
                         }else{
                             orderType=(position+1);
+                            nowpage=1;
+                            pagesize=10;
                             searchPresenter.queryZHCXList(layerid, layername, orderType,searchMC, radius, longitude, latitude, nowpage, pagesize);
                             flag=1;
                             window.dismiss();
@@ -419,7 +423,7 @@ public class ScrollActivityResult extends BaseActivity implements ISearchZHCXLis
     }
 
     @Override
-    public void queryZHCXListSuccessed(List<EntitySearchResult> searchResults) {
+    public void queryZHCXListSuccessed(List<EntitySearchResult> searchResults,int allpages) {
         if(flag==0){
             if (nowpage > 1) {
                 mDatas.addAll(searchResults);
@@ -428,9 +432,11 @@ public class ScrollActivityResult extends BaseActivity implements ISearchZHCXLis
             } else {
                 mDatas.addAll(searchResults);
                 tvFootMc.setText("共找到\"" + searchMC + "\"相关" + mDatas.size() + "个结果");
+                this.allpages=allpages;
                 loadSearchResultsList();
             }
         }else if(flag==1){
+            this.allpages=allpages;
             mDatas.clear();
             mDatas.addAll(searchResults);
             adapter.notifyDataSetChanged();
@@ -463,6 +469,9 @@ public class ScrollActivityResult extends BaseActivity implements ISearchZHCXLis
             @Override
             public void convert(ViewHolder holder, EntitySearchResult entitySearchResult) {
                 holder.setImageResource(R.id.iv_item_scrollresults, R.drawable.ic_zanwutupian);
+                String dmtlj=entitySearchResult.getDmtlj().split(",")[0];
+                String dmtljCS=dmtlj.replace("61.183.129.187:4040","192.168.9.188:8080");
+                Glide.with(ScrollActivityResult.this).load(dmtljCS).into((ImageView) holder.getView(R.id.iv_item_scrollresults));
                 holder.setText(R.id.tv_item_scrollresults_mc, entitySearchResult.getMc());
                 holder.setText(R.id.tv_item_scrollresults_dz, entitySearchResult.getDz());
                 String distance = entitySearchResult.getDistance();
@@ -477,7 +486,8 @@ public class ScrollActivityResult extends BaseActivity implements ISearchZHCXLis
             public void onItemClick(View view, RecyclerView.ViewHolder holder, int position) {
                 Intent intent = new Intent(ScrollActivityResult.this, SearchResultsItemActivity.class);
                 intent.putExtra("NAME", mDatas.get(position - 1).getMc());
-                intent.putExtra("IMAGE_ID", mDatas.get(position - 1).getImageResourceID());
+                intent.putExtra("DZ",mDatas.get(position-1).getDz());
+                intent.putExtra("dmtlj",mDatas.get(position-1).getDmtlj());
                 startActivity(intent);
             }
 
@@ -503,9 +513,15 @@ public class ScrollActivityResult extends BaseActivity implements ISearchZHCXLis
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        nowpage = nowpage + 1;
-                        searchPresenter.queryZHCXList(layerid, layername, orderType,searchMC, radius, longitude, latitude, nowpage, pagesize);
-                        mXRecyclerView.loadMoreComplete();
+                        if(nowpage<allpages){
+                            nowpage = nowpage + 1;
+                            searchPresenter.queryZHCXList(layerid, layername, orderType,searchMC, radius, longitude, latitude, nowpage, pagesize);
+                            mXRecyclerView.loadMoreComplete();
+                        }else {
+                            ToastTool.getInstance().shortLength(ScrollActivityResult.this,"当前区域暂无更多相关结果",true);
+                            mXRecyclerView.loadMoreComplete();
+                        }
+
                     }
                 }, 2000);
             }

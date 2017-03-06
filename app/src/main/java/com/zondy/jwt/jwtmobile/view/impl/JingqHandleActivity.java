@@ -15,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.zhy.adapter.recyclerview.CommonAdapter;
@@ -41,18 +40,10 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import cn.finalteam.rxgalleryfinal.RxGalleryFinal;
-import cn.finalteam.rxgalleryfinal.bean.MediaBean;
-import cn.finalteam.rxgalleryfinal.imageloader.ImageLoaderType;
-import cn.finalteam.rxgalleryfinal.rxbus.RxBusResultSubscriber;
-import cn.finalteam.rxgalleryfinal.rxbus.event.ImageMultipleResultEvent;
+
 
 public class JingqHandleActivity extends BaseActivity implements IJingqhandleView {
 
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
-    @BindView(R.id.tv_title)
-    TextView tvTitle;
     @BindView(R.id.tv_add_media)
     TextView tv_add_media;
     @BindView(R.id.sp_anjian_leibie)
@@ -63,14 +54,12 @@ public class JingqHandleActivity extends BaseActivity implements IJingqhandleVie
     Spinner sp_anjian_xilei;// 案件细类
     @BindView(R.id.sp_ksxz_ajcl)
     Spinner sp_ksxz_ajcl;// 警情处理结果快速选择
-    @BindView(R.id.et_chujing_result_content)
-    EditText et_chujing_result_content;// 案件处理结果描述
+//    @BindView(R.id.et_chujing_result_content)
+//    EditText et_chujing_result_content;// 案件处理结果描述
     @BindView(R.id.tv_confirm_handle)
     TextView tv_confirm_handle;// 确认处理
-    @BindView(R.id.ll_album_container)
-    LinearLayout ll_album_container;
-    @BindView(R.id.rv_media)
-    RecyclerView rv_media;
+//    @BindView(R.id.rv_media)
+//    RecyclerView rv_media;
 
     EntityJingq entityJingq;
     IJingqHandlePresenter jingqHandlePresenter;
@@ -101,6 +90,8 @@ public class JingqHandleActivity extends BaseActivity implements IJingqhandleVie
     CommonAdapter<String> adapterImages;
     List<String> imageDatas;
     private final int REQ_CODE_EDIT_IMAGE = 1;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
 
     public static Intent createIntent(Context context, EntityJingq jingq) {
         Intent intent = new Intent(context, JingqHandleActivity.class);
@@ -160,11 +151,11 @@ public class JingqHandleActivity extends BaseActivity implements IJingqhandleVie
     }
 
     public void initView() {
-        initActionBar(toolbar, tvTitle, "警情处理");
+        toolbar.setTitle("");
+        setSupportActionBar(toolbar);
         updateJingqView(entityJingq);
-
-        rv_media.setLayoutManager(new GridLayoutManager(context, 3));
-        rv_media.setAdapter(adapterImages);
+//        rv_media.setLayoutManager(new GridLayoutManager(context, 3));
+//        rv_media.setAdapter(adapterImages);
     }
 
 
@@ -340,7 +331,7 @@ public class JingqHandleActivity extends BaseActivity implements IJingqhandleVie
                     public void onItemSelected(AdapterView<?> arg0, View arg1,
                                                int arg2, long arg3) {
                         EntityZD spOption = ajclAdapter.getItem(arg2);
-                        et_chujing_result_content.setText(spOption.getMc());
+//                        et_chujing_result_content.setText(spOption.getMc());
                     }
 
                     @Override
@@ -451,8 +442,8 @@ public class JingqHandleActivity extends BaseActivity implements IJingqhandleVie
                 String filesPath = entityJingq.getFilesPath();
                 EntityZD chuljgZD = (EntityZD) sp_ksxz_ajcl.getSelectedItem();
                 final String chuljg = chuljgZD == null ? "" : chuljgZD.getMc();
-                String chuljgms = et_chujing_result_content.getText()
-                        .toString().trim();
+//                String chuljgms = et_chujing_result_content.getText()
+//                        .toString().trim();
                 String ajlb = "-1";
                 if (anjlb != null) {
                     ajlb = anjlb.getBm();
@@ -467,36 +458,37 @@ public class JingqHandleActivity extends BaseActivity implements IJingqhandleVie
                 }
                 String jh = user.getUserName();
                 String simid = CommonUtil.getDeviceId(context);
-                jingqHandlePresenter.jingqHandle(jingyid, jingqid, chuljg, ajlb, ajlx, ajxl, chuljgms, filesPath, jh, simid);
+                jingqHandlePresenter.jingqHandle(jingyid, jingqid, chuljg, ajlb, ajlx, ajxl, "", filesPath, jh, simid);
                 break;
             case R.id.tv_add_media:
                 ToastTool.getInstance().shortLength(context, "添加图片", true);
                 //==========================
-                RxGalleryFinal
-                        .with(JingqHandleActivity.this)
-                        .image()
-                        .multiple()
-                        .maxSize(8)
-                        .imageLoader(ImageLoaderType.GLIDE)
-                        .subscribe(new RxBusResultSubscriber<ImageMultipleResultEvent>() {
-                            @Override
-                            protected void onEvent(ImageMultipleResultEvent imageMultipleResultEvent) throws Exception {
-                                List<MediaBean> medias = imageMultipleResultEvent.getResult();
-                                StringBuffer sb = new StringBuffer();
-                                imageDatas.clear();
-                                for (MediaBean bean : medias) {
-                                    String filePath = bean.getOriginalPath();
-                                    sb.append(filePath + ",");
-                                    imageDatas.add(filePath);
-                                }
-                                entityJingq.setFilesPath(sb.toString());
-                                adapterImages.notifyDataSetChanged();
-                                Toast.makeText(getBaseContext(), "已选择" + sb.toString() + "张图片", Toast.LENGTH_SHORT).show();
-
-
-                            }
-                        })
-                        .openGallery();
+                //以下是rxGalleryFinal写法,但是引入此模块会导致地图无法加载,故舍弃.
+//                RxGalleryFinal
+//                        .with(JingqHandleActivity.this)
+//                        .image()
+//                        .multiple()
+//                        .maxSize(8)
+//                        .imageLoader(ImageLoaderType.GLIDE)
+//                        .subscribe(new RxBusResultSubscriber<ImageMultipleResultEvent>() {
+//                            @Override
+//                            protected void onEvent(ImageMultipleResultEvent imageMultipleResultEvent) throws Exception {
+//                                List<MediaBean> medias = imageMultipleResultEvent.getResult();
+//                                StringBuffer sb = new StringBuffer();
+//                                imageDatas.clear();
+//                                for (MediaBean bean : medias) {
+//                                    String filePath = bean.getOriginalPath();
+//                                    sb.append(filePath + ",");
+//                                    imageDatas.add(filePath);
+//                                }
+//                                entityJingq.setFilesPath(sb.toString());
+//                                adapterImages.notifyDataSetChanged();
+//                                Toast.makeText(getBaseContext(), "已选择" + sb.toString() + "张图片", Toast.LENGTH_SHORT).show();
+//
+//
+//                            }
+//                        })
+//                        .openGallery();
                 //==========================
 
                 break;

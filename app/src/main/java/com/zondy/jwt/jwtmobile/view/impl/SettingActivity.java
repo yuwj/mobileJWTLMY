@@ -70,10 +70,6 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         tvCaijiInfo.setOnClickListener(this);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
     }
 
     @Override

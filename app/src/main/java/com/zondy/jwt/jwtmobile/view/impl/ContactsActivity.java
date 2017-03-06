@@ -97,10 +97,6 @@ public class ContactsActivity extends BaseActivity implements View.OnClickListen
         rlChooseZzjg.setOnClickListener(this);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
         mRv.setLayoutManager(mManager = new LinearLayoutManager(this));
         adapter = new CommonAdapter<EntityContact>(this, R.layout.item_rv_activity_contacts, mDatas) {
             @Override
@@ -141,59 +137,7 @@ public class ContactsActivity extends BaseActivity implements View.OnClickListen
     }
 
     private void initDatas() {
-//        mDatas.add(new EntityContact("喻文杰", "13704968394"));
-//        mDatas.add(new EntityContact("钱小鱼", "13704968394"));
-//        mDatas.add(new EntityContact("王小文", "13704968394"));
-//        mDatas.add(new EntityContact("日小图", "13704968394"));
-//        mDatas.add(new EntityContact("朱小杰", "13704968394"));
-//        mDatas.add(new EntityContact("陂小洋", "13704968394"));
-//        mDatas.add(new EntityContact("李小莫", "13704968394"));
-//        mDatas.add(new EntityContact("波小土", "13704968394"));
-//        mDatas.add(new EntityContact("驰小猪", "13704968394"));
-//        mDatas.add(new EntityContact("邓小哈", "13704968394"));
-//        mDatas.add(new EntityContact("冯小二", "13704968394"));
-//        mDatas.add(new EntityContact("喻文杰", "13704968394"));
-//        mDatas.add(new EntityContact("喻文杰", "13704968394"));
-//        mDatas.add(new EntityContact("钱小鱼", "13704968394"));
-//        mDatas.add(new EntityContact("王小文", "13704968394"));
-//        mDatas.add(new EntityContact("日小图", "13704968394"));
-//        mDatas.add(new EntityContact("朱小杰", "13704968394"));
-//        mDatas.add(new EntityContact("陂小洋", "13704968394"));
-//        mDatas.add(new EntityContact("李小莫", "13704968394"));
-//        mDatas.add(new EntityContact("波小土", "13704968394"));
-//        mDatas.add(new EntityContact("驰小猪", "13704968394"));
-//        mDatas.add(new EntityContact("邓小哈", "13704968394"));
-//        mDatas.add(new EntityContact("冯小二", "13704968394"));
-//        mDatas.add(new EntityContact("喻文杰", "13704968394"));
-//        mDatas.add(new EntityContact("喻文杰", "13704968394"));
-//        mDatas.add(new EntityContact("钱小鱼", "13704968394"));
-//        mDatas.add(new EntityContact("王小文", "13704968394"));
-//        mDatas.add(new EntityContact("日小图", "13704968394"));
-//        mDatas.add(new EntityContact("朱小杰", "13704968394"));
-//        mDatas.add(new EntityContact("陂小洋", "13704968394"));
-//        mDatas.add(new EntityContact("李小莫", "13704968394"));
-//        mDatas.add(new EntityContact("波小土", "13704968394"));
-//        mDatas.add(new EntityContact("驰小猪", "13704968394"));
-//        mDatas.add(new EntityContact("邓小哈", "13704968394"));
-//        mDatas.add(new EntityContact("冯小二", "13704968394"));
-//        mDatas.add(new EntityContact("喻文杰", "13704968394"));
-//        mDatas.add(new EntityContact("Tracy McGrady", "6666666"));
-//        mDatas.add(new EntityContact("Allen Iverson", "8888888"));
-//        mDatas.add(new EntityContact("Kobe Bryant", "111111"));
-//        mDatas.add(new EntityContact("!特殊符号", "000000"));
-//        mDatas.add(new EntityContact("?特殊符号", "000000"));
-//        mDatas.add(new EntityContact("~特殊符号", "000000"));
-//        mDatas.add(new EntityContact("@特殊符号", "000000"));
-//        mDatas.add(new EntityContact("$特殊符号", "000000"));
-//        mDatas.add(new EntityContact("登哥", "647294"));
         contactPresenter.queryContactsByZZJG("320923000000");
-//        adapter.notifyDataSetChanged();
-//        mIndexBar.setmPressedShowTextView(mTvSideBarHint)
-//                .setNeedRealIndex(true)
-//                .setmLayoutManager(mManager)
-//                .setmSourceDatas(mDatas)
-//                .invalidate();
-//        mDecoration.setmDatas(mDatas);
     }
 
     @Override
@@ -435,12 +379,6 @@ public class ContactsActivity extends BaseActivity implements View.OnClickListen
      */
     @Override
     public void queryZZJGSuccessed(List<EntityZD> allEntitys) {
-//        List<EntityZD> zds=getChildrenOffices(allEntitys,lianygsjZD,currentLevel);
-//        if(zds!=null){
-//            mZZJGDatas.clear();
-//            mZZJGDatas.addAll(zds);
-//            commonAdapterZZJG.notifyDataSetChanged();
-//        }
         initSourceDatas(allEntitys);
         mZZJGDatas.clear();
         mZZJGDatas.addAll(allEntitys);

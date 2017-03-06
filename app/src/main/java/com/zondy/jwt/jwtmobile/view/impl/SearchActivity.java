@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -26,16 +27,24 @@ import com.zhy.adapter.recyclerview.MultiItemTypeAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
 import com.zondy.jwt.jwtmobile.R;
 import com.zondy.jwt.jwtmobile.base.BaseActivity;
+import com.zondy.jwt.jwtmobile.entity.EntitySearchHistory;
 import com.zondy.jwt.jwtmobile.entity.EntityTCFL;
 import com.zondy.jwt.jwtmobile.presenter.ISearchPresenter;
 import com.zondy.jwt.jwtmobile.presenter.impl.SearchPresenterImpl;
+import com.zondy.jwt.jwtmobile.util.RealmHelper;
+import com.zondy.jwt.jwtmobile.util.ToastTool;
 import com.zondy.jwt.jwtmobile.view.ISearchTCFLView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import io.realm.Realm;
+
+import static android.R.attr.data;
 
 public class SearchActivity extends BaseActivity implements ISearchTCFLView {
     @BindView(R.id.btn_more)
@@ -62,11 +71,10 @@ public class SearchActivity extends BaseActivity implements ISearchTCFLView {
     private XRecyclerView rvHistory;
     private RelativeLayout btnClearHistory;
     private String searchMC = "";
-
-
-    //搜索历史假数据
+    private RealmHelper mRealmHelper;
+    private CommonAdapter<String> commonAdapter;
     private List<String> mDatas = new ArrayList<>();
-
+    private Date date=new Date();
     @Override
     public int setCustomContentViewResourceId() {
         return R.layout.activity_search;
@@ -82,24 +90,30 @@ public class SearchActivity extends BaseActivity implements ISearchTCFLView {
         initParams();
         initViews();
         initDatas();
+
     }
 
-    private void initDatas() {
-        mDatas.add("银行");
-        mDatas.add("淮安市客运站");
-        mDatas.add("新公安局");
-        mDatas.add("东湖宾馆");
-        mDatas.add("小吃");
-        mDatas.add("加油站");
-        mDatas.add("中百超市");
-        mDatas.add("公交站");
-        mDatas.add("药店");
-        mDatas.add("翔宇大厦");
-        mDatas.add("景点");
-        mDatas.add("网鱼网咖");
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    public void initDatas() {
+        mDatas.clear();
+        List<EntitySearchHistory> histories=mRealmHelper.queryAllhistory();
+        if(histories.size()>0){
+            for(EntitySearchHistory history:histories  ){
+                mDatas.add(history.getKeyword());
+                Log.i("sheep",history.getKeyword()+":"+history.getId());
+            }
+            commonAdapter.notifyDataSetChanged();
+        }else {
+            commonAdapter.notifyDataSetChanged();
+        }
     }
 
     private void initParams() {
+        mRealmHelper=new RealmHelper(this);
         ivBack = (ImageView) findViewById(R.id.iv_search_back);
         btnSearch = (Button) findViewById(R.id.btn_search_confirm);
         ivCancel = (ImageView) findViewById(R.id.iv_search_cancel);
@@ -123,6 +137,7 @@ public class SearchActivity extends BaseActivity implements ISearchTCFLView {
             public void onClick(View v) {
                 Intent intent = new Intent(SearchActivity.this, SearchMoreActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
         etSearch.addTextChangedListener(new TextWatcher() {
@@ -149,7 +164,7 @@ public class SearchActivity extends BaseActivity implements ISearchTCFLView {
         });
         rvHistory.setLayoutManager(new LinearLayoutManager(this));
         rvHistory.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        final CommonAdapter<String> commonAdapter = new CommonAdapter<String>(this, R.layout.item_search_history, mDatas) {
+        commonAdapter = new CommonAdapter<String>(this, R.layout.item_search_history, mDatas) {
 
             @Override
             protected void convert(ViewHolder holder, String s, int position) {
@@ -164,7 +179,14 @@ public class SearchActivity extends BaseActivity implements ISearchTCFLView {
         commonAdapter.setOnItemClickListener(new MultiItemTypeAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, RecyclerView.ViewHolder holder, int position) {
-//                Toast.makeText(SearchActivity.this, "点击了" + mDatas.get(position - 1), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(SearchActivity.this, ScrollActivityResult.class);
+                intent.putExtra("MC", ""+mDatas.get(position-1));
+                Date date=new Date();
+                String id=date.getTime()+"";
+                EntitySearchHistory history= new EntitySearchHistory(id,""+mDatas.get(position-1));
+                mRealmHelper.addHistory(history);
+                startActivity(intent);
+                initDatas();
             }
 
             @Override
@@ -174,6 +196,7 @@ public class SearchActivity extends BaseActivity implements ISearchTCFLView {
         });
         rvHistory.setAdapter(commonAdapter);
         rvHistory.setPullRefreshEnabled(false);
+        rvHistory.setLoadingMoreEnabled(false);
         rvHistory.setLoadingMoreProgressStyle(ProgressStyle.Pacman);
         rvHistory.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
@@ -183,19 +206,14 @@ public class SearchActivity extends BaseActivity implements ISearchTCFLView {
 
             @Override
             public void onLoadMore() {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mDatas.add("加载了更多搜索历史");
-                        mDatas.add("加载了更多搜索历史");
-                        mDatas.add("加载了更多搜索历史");
-                        mDatas.add("加载了更多搜索历史");
-                        mDatas.add("加载了更多搜索历史");
-                        mDatas.add("加载了更多搜索历史");
-                        commonAdapter.notifyDataSetChanged();
-                        rvHistory.loadMoreComplete();
-                    }
-                }, 2000);
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        mDatas.add("加载了更多搜索历史");
+//                        commonAdapter.notifyDataSetChanged();
+//                        rvHistory.loadMoreComplete();
+//                    }
+//                }, 2000);
             }
         });
 
@@ -214,9 +232,8 @@ public class SearchActivity extends BaseActivity implements ISearchTCFLView {
         btnClearHistory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDatas.clear();
-                commonAdapter.notifyDataSetChanged();
-                rvHistory.setVisibility(View.GONE);
+                mRealmHelper.deleteAllhistory();
+                initDatas();
             }
         });
         btnSearch.setOnClickListener(new View.OnClickListener() {
@@ -224,7 +241,12 @@ public class SearchActivity extends BaseActivity implements ISearchTCFLView {
             public void onClick(View v) {
                 Intent intent = new Intent(SearchActivity.this, ScrollActivityResult.class);
                 intent.putExtra("MC", ""+etSearch.getText().toString());
+                Date datedmc=new Date();
+                String idmc=datedmc.getTime()+"";
+                EntitySearchHistory historymc= new EntitySearchHistory(idmc,""+etSearch.getText().toString());
+                mRealmHelper.addHistory(historymc);
                 startActivity(intent);
+                initDatas();
             }
         });
     }
@@ -245,37 +267,75 @@ public class SearchActivity extends BaseActivity implements ISearchTCFLView {
             case R.id.cb_lvguan:
                 Intent intentlg=new Intent(SearchActivity.this,ScrollActivityResult.class);
                 intentlg.putExtra("MC","旅馆");
+                Date datelg=new Date();
+                String idlg=datelg.getTime()+"";
+                EntitySearchHistory historylg= new EntitySearchHistory(idlg,"旅馆");
+                mRealmHelper.addHistory(historylg);
                 startActivity(intentlg);
+                initDatas();
                 break;
             case R.id.cb_wangba:
                 Intent intentwb=new Intent(SearchActivity.this,ScrollActivityResult.class);
                 intentwb.putExtra("MC","网吧");
+                SimpleDateFormat format=new SimpleDateFormat("yyyy年MM月dd日   HH:mm:ss");
+                Date curDate=new Date(System.currentTimeMillis());
+                String str=format.format(curDate);
+                Date datewb=new Date();
+                String idwb=datewb.getTime()+"";
+                EntitySearchHistory history=new EntitySearchHistory(idwb,"网吧");
+                mRealmHelper.addHistory(history);
                 startActivity(intentwb);
+                initDatas();
                 break;
             case R.id.cb_xuexiao:
                 Intent intentxx=new Intent(SearchActivity.this,ScrollActivityResult.class);
                 intentxx.putExtra("MC","学校");
+                Date datexx=new Date();
+                String idxx=datexx.getTime()+"";
+                EntitySearchHistory historyxx= new EntitySearchHistory(idxx,"学校");
+                mRealmHelper.addHistory(historyxx);
                 startActivity(intentxx);
+                initDatas();
                 break;
             case R.id.cb_tingchechang:
                 Intent intenttcc=new Intent(SearchActivity.this,ScrollActivityResult.class);
                 intenttcc.putExtra("MC","停车场");
+                Date datetcc=new Date();
+                String idtcc=datetcc.getTime()+"";
+                EntitySearchHistory historytcc= new EntitySearchHistory(idtcc,"停车场");
+                mRealmHelper.addHistory(historytcc);
                 startActivity(intenttcc);
+                initDatas();
                 break;
             case R.id.cb_chaoshi:
                 Intent intentcs=new Intent(SearchActivity.this,ScrollActivityResult.class);
                 intentcs.putExtra("MC","超市");
+                Date datecs=new Date();
+                String idcs=datecs.getTime()+"";
+                EntitySearchHistory historycs= new EntitySearchHistory(idcs,"超市");
+                mRealmHelper.addHistory(historycs);
                 startActivity(intentcs);
+                initDatas();
                 break;
             case R.id.cb_jiuba:
                 Intent intentjb=new Intent(SearchActivity.this,ScrollActivityResult.class);
                 intentjb.putExtra("MC","酒吧");
+                Date datejb=new Date();
+                String idjb=datejb.getTime()+"";
+                EntitySearchHistory historyjb= new EntitySearchHistory(idjb,"酒吧");
+                mRealmHelper.addHistory(historyjb);
                 startActivity(intentjb);
+                initDatas();
                 break;
             case R.id.cb_dianyingyuan:
                 Intent intentdyy=new Intent(SearchActivity.this,ScrollActivityResult.class);
                 intentdyy.putExtra("MC","电影院");
+                Date datedyy=new Date();
+                String iddyy=datedyy.getTime()+"";
+                EntitySearchHistory historydyy= new EntitySearchHistory(iddyy,"电影院");
+                mRealmHelper.addHistory(historydyy);
                 startActivity(intentdyy);
+                initDatas();
                 break;
         }
     }

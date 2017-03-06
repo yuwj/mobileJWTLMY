@@ -6,8 +6,11 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
@@ -36,15 +39,17 @@ public class JingqListActivity extends BaseActivity implements IJingqListView {
 
     @BindView(R.id.rl_jingqdatas)
     XRecyclerView rlJingqdatas;
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
-    @BindView(R.id.tv_title)
-    TextView tvTitle;
 
     IJingqHandlePresenter jingqclPresenter;
     List<EntityJingq> jingqDatas;
     CommonAdapter<EntityJingq> adapterJingqList;
     EntityUser user;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.et_search)
+    EditText etSearch;
+    @BindView(R.id.iv_search)
+    ImageView ivSearch;
 
     public static Intent createIntent(Context context) {
         Intent intent = new Intent(context, JingqListActivity.class);
@@ -53,7 +58,7 @@ public class JingqListActivity extends BaseActivity implements IJingqListView {
 
     @Override
     public int setCustomContentViewResourceId() {
-        return R.layout.activity_jingqcl;
+        return R.layout.activity_jingqcl_list;
     }
 
     @Override
@@ -75,10 +80,10 @@ public class JingqListActivity extends BaseActivity implements IJingqListView {
         user = SharedTool.getInstance().getUserInfo(context);
         jingqDatas = new ArrayList<EntityJingq>();
 
-        adapterJingqList = new CommonAdapter<EntityJingq>(context, R.layout.item_jingqcl_jingq, jingqDatas) {
+        adapterJingqList = new CommonAdapter<EntityJingq>(context, R.layout.item_jingqcl_list, jingqDatas) {
             @Override
             protected void convert(ViewHolder holder, EntityJingq entityJingq, int position) {
-                holder.setText(R.id.tv_title, entityJingq.getBaojdz());
+                holder.setText(R.id.tv_area, entityJingq.getBaojdz());
                 holder.setText(R.id.tv_message, entityJingq.getBaojnr());
                 holder.setText(R.id.tv_time, entityJingq.getBaojsj());
             }
@@ -88,10 +93,10 @@ public class JingqListActivity extends BaseActivity implements IJingqListView {
     }
 
     public void initView() {
-        initActionBar(toolbar, tvTitle, "警情处理");
+        toolbar.setTitle("");
+        setSupportActionBar(toolbar);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         rlJingqdatas.setLayoutManager(linearLayoutManager);
-
         rlJingqdatas.setRefreshProgressStyle(ProgressStyle.Pacman);
         rlJingqdatas.setLoadingMoreProgressStyle(ProgressStyle.Pacman);
         rlJingqdatas.setPullRefreshEnabled(true);
@@ -101,11 +106,12 @@ public class JingqListActivity extends BaseActivity implements IJingqListView {
             public void onRefresh() {
                 String jh = user.getUserName();
                 String simid = CommonUtil.getDeviceId(context);
-                jingqclPresenter.queryJingqDatas(jh,simid);
+                jingqclPresenter.queryJingqDatas(jh, simid);
             }
 
             @Override
             public void onLoadMore() {
+
             }
         });
 
@@ -114,12 +120,9 @@ public class JingqListActivity extends BaseActivity implements IJingqListView {
         adapterJingqList.setOnItemClickListener(new MultiItemTypeAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, RecyclerView.ViewHolder holder, int position) {
-                EntityJingq jingq = jingqDatas.get(position-1);
-//                if (jingq.getState() >= EntityJingq.HADHANDLED) {
-//                    startActivity(JingqDetailWithHandledActivity.createIntent(context, jingq));
-//                } else {
-                    startActivity(JingqDetailWithUnhandleActivity.createIntent(context,jingq ));
-//                }
+                EntityJingq jingq = jingqDatas.get(position - 1);
+                startActivity(JingqDetailWithUnhandleActivity.createIntent(context, jingq));
+                etSearch.clearFocus();
 
             }
 
@@ -135,23 +138,31 @@ public class JingqListActivity extends BaseActivity implements IJingqListView {
 
     }
 
-    public void queryJingqDatas(){
-        String jh = user.getUserName();
-        String simid = CommonUtil.getDeviceId(context);
-        jingqclPresenter.queryJingqDatas(jh, simid);
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar_jingqcl, menu);
+        return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
-                this.finish();
+            case R.id.menu:
+                ToastTool.getInstance().shortLength(this, "菜单", true);
                 break;
-            default:
+            case android.R.id.home:
+                finish();
                 break;
         }
         return true;
     }
+
+    public void queryJingqDatas() {
+        String jh = user.getUserName();
+        String simid = CommonUtil.getDeviceId(context);
+        jingqclPresenter.queryJingqDatas(jh, simid);
+    }
+
 
     @Override
     public void onGetJingqDatasSuccess(final List<EntityJingq> jingqDatas) {
@@ -170,7 +181,7 @@ public class JingqListActivity extends BaseActivity implements IJingqListView {
 
     }
 
-    public void recyclerViewLoadFinish(){
+    public void recyclerViewLoadFinish() {
         rlJingqdatas.refreshComplete();
         rlJingqdatas.loadMoreComplete();
     }

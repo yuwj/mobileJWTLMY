@@ -1,6 +1,6 @@
 [
     {
-        "outputFile": "/Users/sheep/AndroidStudioProjects/JWTMobile/scrolllayout/build/intermediates/incremental/mergeDebugAndroidTestResources/merged.dir/values/values.xml",
+        "outputFile": "/Users/sheep/AndroidStudioProjects/mobileJWTLMY0209/mobileJWTLMY/scrolllayout/build/intermediates/incremental/mergeDebugAndroidTestResources/merged.dir/values/values.xml",
         "map": [
             {
                 "to": {
@@ -11,7 +11,7 @@
                     "endOffset": 559
                 },
                 "from": {
-                    "file": "/Users/sheep/AndroidStudioProjects/JWTMobile/scrolllayout/build/intermediates/bundles/debug/res/values/values.xml",
+                    "file": "/Users/sheep/AndroidStudioProjects/mobileJWTLMY0209/mobileJWTLMY/scrolllayout/build/intermediates/bundles/debug/res/values/values.xml",
                     "position": {
                         "startLine": 7,
                         "startColumn": 4,

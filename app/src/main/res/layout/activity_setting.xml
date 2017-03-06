@@ -9,7 +9,9 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="#ffffff">
+        android:navigationIcon="@drawable/ic_back_baijiantou"
+        app:navigationIcon="@drawable/ic_back_baijiantou"
+        android:background="#199793">
 
         <TextView
             android:layout_width="wrap_content"
@@ -17,7 +19,7 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:text="设置"
-            android:textColor="#000000"
+            android:textColor="#ffffff"
             android:textSize="20sp"
             android:textStyle="bold"/>
     </android.support.v7.widget.Toolbar>

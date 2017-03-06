@@ -60,7 +60,7 @@ public class UrlManager {
     // public static String jingqinglx = "/QueryJQ!queryJQLX";// 获取警情类型
     // public static String jingqingxl = "/QueryJQ!queryJQXL";// 获取警情细类
 
-    // ========数据采集 start========
+    // ========ic_shujcj start========
     public static String caijlx = "/Static2Json!getCJLX";// 获取采集类型列表
     public static String caijTucengByLx = "/Static2Json!getCjtcByLx";// 获取采集图层列表
     public static String caijTucengAddFieldList = "/QueryLayerStructJson!getLayerAttribute";// 获取图层结构属性
@@ -77,7 +77,7 @@ public class UrlManager {
     public static String caijiQueryResult = "/QueryLayer2Json!queryData";// 采集查询结果
     public static String caijiRecordEditFieldList = "/QueryLayer2Json!queryForEdit";// 获取采集记录的字段
 
-    // ========数据采集 end========
+    // ========ic_shujcj end========
 
     // ========报备 start========
     public static String baobeiTuogang = "/GRBB!baobeiTuogang";// 报备脱岗提交
@@ -102,7 +102,7 @@ public class UrlManager {
     public static String jingqfxGetLineChartNextLevelDatas = "/Tongjfx!Jqtjfx_xt";// 警情分析线图下探
     // ========统计分析 end========
     // ========盘查 start========
-    public static String panchaQueryPerson = "/XLPC!pcbd";// 盘查比对,查询所有满足条件的人员信息
+    public static String panchaQueryPerson = "/XLPC!pcbd";// ic_pancbd,查询所有满足条件的人员信息
     public static String panchaQueryBiduiCommonInfos = "/XLPC!rybdxx";// 查询比对基本信息集合
     public static String panchaQueryBiduiDetailInfosWithWFFZ = "/XLPC!wffzjl";// 查询比对详细信息集合之违法犯罪
     public static String panchaQueryBiduiDetailInfosWithBKRY = "/XLPC!bkjl";// 查询比对详细信息集合之布控人员

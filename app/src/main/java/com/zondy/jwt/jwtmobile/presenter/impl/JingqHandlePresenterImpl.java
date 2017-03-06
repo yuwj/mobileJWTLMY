@@ -91,13 +91,12 @@ public class JingqHandlePresenterImpl implements IJingqHandlePresenter {
         jingqHandleModel.reloadJingq(jingqid, jh, simid, new IReloadJingqCallback() {
             @Override
             public void loadJingqSuccess(EntityJingq jingq) {
-                jingqdcView.reLoadJingqSuccess(jingq);
+//                jingqdcView.reLoadJingqSuccess(jingq);
             }
 
             @Override
             public void loadJingqFailed(Exception exception) {
-
-                jingqdcView.reLoadJIngqFalied(exception);
+//                jingqdcView.reLoadJIngqFalied(exception);
             }
         });
     }@Override

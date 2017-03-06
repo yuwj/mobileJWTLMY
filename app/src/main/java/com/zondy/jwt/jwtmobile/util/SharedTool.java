@@ -33,6 +33,19 @@ public class SharedTool {
     }
 
     /**
+     * 保存搜索的历史的记录
+     * @param context
+     * @param keyword
+     */
+    public void saveSearchHistory(Context context,String keyword){
+        SharedPreferences preferences=context.getSharedPreferences(Constant.USER_SHARED_FILE,Activity.MODE_PRIVATE);
+        Editor editor=preferences.edit();
+        editor.putString("searchKeyword",keyword);
+        editor.commit();
+    }
+
+
+    /**
      * 保存上次获取的经纬度
      *
      * @param longitude

@@ -155,18 +155,18 @@ public class JingqDetailWithUnhandleActivityWithSearch extends BaseActivity impl
     }
 
 
-    @Override
-    public void reLoadJingqSuccess(EntityJingq jingq) {
-        dismissLoadingDialog();
-        this.entityJingq = jingq;
-        updateJingqView(jingq);
-    }
-
-    @Override
-    public void reLoadJIngqFalied(Exception e) {
-        dismissLoadingDialog();
-        ToastTool.getInstance().shortLength(context,e.getMessage(),true);
-    }
+//    @Override
+//    public void reLoadJingqSuccess(EntityJingq jingq) {
+//        dismissLoadingDialog();
+//        this.entityJingq = jingq;
+//        updateJingqView(jingq);
+//    }
+//
+//    @Override
+//    public void reLoadJIngqFalied(Exception e) {
+//        dismissLoadingDialog();
+//        ToastTool.getInstance().shortLength(context,e.getMessage(),true);
+//    }
 
     @Override
     public void receiveJingqSuccess() {

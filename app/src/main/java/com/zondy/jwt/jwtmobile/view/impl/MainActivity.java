@@ -1,7 +1,6 @@
 package com.zondy.jwt.jwtmobile.view.impl;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
@@ -11,8 +10,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -21,7 +21,6 @@ import com.zhy.adapter.recyclerview.MultiItemTypeAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
 import com.zondy.jwt.jwtmobile.R;
 import com.zondy.jwt.jwtmobile.base.BaseActivity;
-import com.zondy.jwt.jwtmobile.entity.EntityJingq;
 import com.zondy.jwt.jwtmobile.entity.EntityUser;
 import com.zondy.jwt.jwtmobile.util.SharedTool;
 import com.zondy.jwt.jwtmobile.util.ToastTool;
@@ -42,18 +41,18 @@ public class MainActivity extends BaseActivity {
     TextView tvName;
     @BindView(R.id.tv_ll_jh)
     TextView tvJh;
+    @BindView(R.id.et_search)
+    EditText etSearch;
+    @BindView(R.id.rl_search)
+    RelativeLayout rlSearch;
     private DrawerLayout drawerLayout;
     private MapView mapView;
     private FloatingActionButton fab;
-//    private LinearLayout llZhcx;
-//    private LinearLayout llTxl;
-//    private LinearLayout llSz;
-//    @BindView(R.id.ll_main_jingqcl)
-//    LinearLayout llMainJingqcl;//警情处理
     @BindView(R.id.rv_menu)
     RecyclerView rv_menu;//菜单
     List<EntityMenu> menus;
     CommonAdapter<EntityMenu> adapterMenuList;
+
     @Override
     public int setCustomContentViewResourceId() {
         return R.layout.activity_main;
@@ -62,8 +61,20 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        com.zondy.mapgis.android.environment.Environment.requestAuthorization(this, new com.zondy.mapgis.android.environment.Environment.AuthorizeCallback() {
+            @Override
+            public void onComplete() {
+                initMap();
+            }
+        });
         initParams();
         initViews();
+    }
+
+    private void initMap() {
+        mapView.loadFromFile(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "MapGIS/map/wuhan/wuhan.xml");
+        mapView.setZoomControlsEnabled(true);
+        mapView.setShowLogo(true);
     }
 
     private void initParams() {
@@ -71,25 +82,20 @@ public class MainActivity extends BaseActivity {
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         menus = new ArrayList<>();
-        menus.add(new EntityMenu("综合查询",R.drawable.ic_zonghss));
-        menus.add(new EntityMenu("通讯录",R.drawable.ic_tongxl));
-        menus.add(new EntityMenu("警情处理",R.drawable.ic_shezhi));
-        menus.add(new EntityMenu("设置",R.drawable.ic_shezhi));
-        menus.add(new EntityMenu("盘查比对",R.drawable.ic_shezhi));
-        menus.add(new EntityMenu("数据采集",R.drawable.ic_shezhi));
-        adapterMenuList = new CommonAdapter<EntityMenu>(context,R.layout.item_main_menu,menus) {
+        menus.add(new EntityMenu("通讯录", R.drawable.ic_tongxl));
+        menus.add(new EntityMenu("警情处理", R.drawable.ic_jingqcl));
+        menus.add(new EntityMenu("巡逻盘查", R.drawable.ic_pancbd));
+        menus.add(new EntityMenu("数据采集", R.drawable.ic_shujucj));
+        menus.add(new EntityMenu("设置", R.drawable.ic_shezhi));
+        adapterMenuList = new CommonAdapter<EntityMenu>(context, R.layout.item_main_menu, menus) {
             @Override
             protected void convert(ViewHolder holder, EntityMenu s, int position) {
                 TextView tv = holder.getView(R.id.tv_value);
                 tv.setText(s.getMenuTitle());
                 ImageView iv = holder.getView(R.id.iv_value);
                 Glide.with(context).load(s.getMenuResourceId()).into(iv);
-//                Drawable drawable= getResources().getDrawable(s.getMenuResourceId());
-//                drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
-//                tv.setCompoundDrawables(drawable,null,null,null);
 
             }
-
 
 
         };
@@ -101,35 +107,30 @@ public class MainActivity extends BaseActivity {
                 TextView tv = (TextView) view.findViewById(R.id.tv_value);
 
                 String menuTxt = tv.getText().toString().trim();
-                    if("综合查询".equals(menuTxt)){
-                        ToastTool.getInstance().shortLength(context,menuTxt,true);
-
-                        Intent intent = new Intent(MainActivity.this, ScrollActivity.class);
-                        startActivity(intent);
-                        return;
-                    }
-                if("通讯录".equals(menuTxt)){
-                    ToastTool.getInstance().shortLength(context,menuTxt,true);
-
-                    Intent intent=new Intent(MainActivity.this,ContactsActivity.class);
+                if ("通讯录".equals(menuTxt)) {
+                    Intent intent = new Intent(MainActivity.this, ContactsActivity.class);
                     startActivity(intent);
+                    etSearch.clearFocus();
                     return;
                 }
-                if("警情处理".equals(menuTxt)){
-                    ToastTool.getInstance().shortLength(context,menuTxt,true);
-                    startActivity(JingqListActivity.createIntent(context)); return;
+                if ("警情处理".equals(menuTxt)) {
+                    startActivity(JingqListActivity.createIntent(context));
+                    etSearch.clearFocus();
+                    return;
                 }
-                if("设置".equals(menuTxt)){
-                    ToastTool.getInstance().shortLength(context,menuTxt,true);
+                if ("设置".equals(menuTxt)) {
                     Intent intent = new Intent(MainActivity.this, SettingActivity.class);
-                    startActivity(intent);  return;
-                }
-                if("盘查比对".equals(menuTxt)){
-                    ToastTool.getInstance().shortLength(context,menuTxt,true);
+                    startActivity(intent);
+                    etSearch.clearFocus();
                     return;
                 }
-                if("数据采集".equals(menuTxt)){
-                    ToastTool.getInstance().shortLength(context,menuTxt,true);
+                if ("巡逻盘查".equals(menuTxt)) {
+                    XunlpcActivity.actionStart(MainActivity.this);
+                    etSearch.clearFocus();
+                    return;
+                }
+                if ("数据采集".equals(menuTxt)) {
+                    ToastTool.getInstance().shortLength(context, menuTxt, true);
                     return;
                 }
             }
@@ -145,56 +146,51 @@ public class MainActivity extends BaseActivity {
         EntityUser user = SharedTool.getInstance().getUserInfo(MainActivity.this);
         if (user != null) {
             tvName.setText(user.getCtname());
-            tvJh.setText("警号："+user.getUserName());
+            tvJh.setText("警号：" + user.getUserName());
         }
-        mapView.loadFromFile(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "MapGIS/map/wuhan/wuhan.xml");
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 drawerLayout.openDrawer(Gravity.LEFT);
             }
         });
-//        llZhcx.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(MainActivity.this, ScrollActivity.class);
-//                startActivity(intent);
-//                drawerLayout.closeDrawers();
-//            }
-//        });
-//        llTxl.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent=new Intent(MainActivity.this,ContactsActivity.class);
-//                startActivity(intent);
-//                drawerLayout.closeDrawers();
-//            }
-//        });
-//        llSz.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(MainActivity.this, SettingActivity.class);
-//                startActivity(intent);
-//                drawerLayout.closeDrawers();
-//            }
-//        });
-//        llMainJingqcl.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                ToastTool.getInstance().shortLength(context,"警情处理",true);
-//                startActivity(JingqListActivity.createIntent(context));
-//            }
-//        });
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         rv_menu.setLayoutManager(linearLayoutManager);
         rv_menu.setAdapter(adapterMenuList);
+        rlSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+                startActivity(intent);
+                etSearch.clearFocus();
+            }
+        });
+        etSearch.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+                    startActivity(intent);
+                    etSearch.clearFocus();
+                }
+            }
+        });
+        etSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+                startActivity(intent);
+                etSearch.clearFocus();
+            }
+        });
     }
 
-    class EntityMenu{
+    class EntityMenu {
         String menuTitle;
         int menuResourceId;
 
-        public EntityMenu( String menuTitle,int menuResourceId) {
+        public EntityMenu(String menuTitle, int menuResourceId) {
             this.menuResourceId = menuResourceId;
             this.menuTitle = menuTitle;
         }

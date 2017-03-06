@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -16,29 +18,50 @@ import com.zondy.jwt.jwtmobile.manager.IpSetManager;
 import com.zondy.jwt.jwtmobile.manager.UrlManager;
 import com.zondy.jwt.jwtmobile.presenter.ILoginPresenter;
 import com.zondy.jwt.jwtmobile.presenter.impl.LoginPresenterImpl;
+import com.zondy.jwt.jwtmobile.util.BottomMenu;
 import com.zondy.jwt.jwtmobile.util.CommonUtil;
 import com.zondy.jwt.jwtmobile.util.SharedTool;
 import com.zondy.jwt.jwtmobile.util.ToastTool;
 import com.zondy.jwt.jwtmobile.view.ILoginView;
 
 import butterknife.BindView;
+import de.hdodenhof.circleimageview.CircleImageView;
+
+import static com.zondy.jwt.jwtmobile.R.id.btn_login;
+import static com.zondy.jwt.jwtmobile.R.id.btn_login_recorded;
+import static com.zondy.jwt.jwtmobile.R.id.tv_ip;
+import static com.zondy.jwt.jwtmobile.R.id.tv_more;
 
 public class LoginActivity extends BaseActivity implements ILoginView, View.OnClickListener {
     EntityUser entityUser;
-    @BindView(R.id.et_uname)
-    EditText et_uname;//登录用户
-    @BindView(R.id.et_pword)
-    EditText et_pword;//登录密码
-    @BindView(R.id.tv_dl_login)
-    TextView tv_dl_login;//登录按钮
-    @BindView(R.id.btn_setip)
-    TextView btn_setip;//设置ip按钮
-    @BindView(R.id.ll_container)
-    RelativeLayout ll_container;
     IpSetManager ipSetManager;
     IipSetListener ipSetListener;
 
     ILoginPresenter loginPresenter = new LoginPresenterImpl(this);
+    @BindView(R.id.et_username)
+    EditText etUsername;
+    @BindView(R.id.et_password)
+    EditText etPassword;
+    @BindView(R.id.btn_login)
+    Button btnLogin;
+    @BindView(R.id.tv_more)
+    TextView tvMore;
+    @BindView(R.id.icon_image)
+    CircleImageView iconImage;
+    @BindView(R.id.tv_username)
+    TextView tvUsername;
+    @BindView(R.id.et_password_recorded)
+    EditText etPasswordRecorded;
+    @BindView(R.id.btn_login_recorded)
+    Button btnLoginRecorded;
+    @BindView(R.id.ll_recorded)
+    LinearLayout llRecorded;
+    @BindView(R.id.ll_norecord)
+    LinearLayout llNorecord;
+    @BindView(R.id.rl_bg)
+    RelativeLayout rlBg;
+    @BindView(R.id.tv_ip)
+    TextView tvIp;
 
     @Override
     public int setCustomContentViewResourceId() {
@@ -65,12 +88,18 @@ public class LoginActivity extends BaseActivity implements ILoginView, View.OnCl
     }
 
     private void initView() {
-        if (entityUser != null) {
-            et_uname.setText(entityUser.getUserName());
-            et_pword.setText(entityUser.getPassword());
+        if (!entityUser.getUserName().equals("")) {
+            llNorecord.setVisibility(View.GONE);
+            tvIp.setVisibility(View.GONE);
+            llRecorded.setVisibility(View.VISIBLE);
+            tvMore.setVisibility(View.VISIBLE);
+            tvUsername.setText(entityUser.getUserName());
+            rlBg.setBackground(getDrawable(R.drawable.bg_login_recorded));
         }
-        tv_dl_login.setOnClickListener(this);
-        btn_setip.setOnClickListener(this);
+        btnLoginRecorded.setOnClickListener(this);
+        btnLogin.setOnClickListener(this);
+        tvMore.setOnClickListener(this);
+        tvIp.setOnClickListener(this);
     }
 
     private void initOperator() {
@@ -80,12 +109,23 @@ public class LoginActivity extends BaseActivity implements ILoginView, View.OnCl
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btn_setip:
-                ipSetManager.showSetIpDialog(LoginActivity.this, ipSetListener);
+            case R.id.btn1:
+                llNorecord.setVisibility(View.VISIBLE);
+                tvIp.setVisibility(View.VISIBLE);
+                llRecorded.setVisibility(View.GONE);
+                tvMore.setVisibility(View.GONE);
+                rlBg.setBackground(getDrawable(R.drawable.bg_login));
                 break;
-            case R.id.tv_dl_login:
-                final String userName = et_uname.getText().toString().trim();
-                final String password = et_pword.getText().toString().trim();
+            case R.id.btn2:
+                ipSetManager.showSetIpDialog(LoginActivity.this,ipSetListener);
+                break;
+            case tv_more:
+                BottomMenu bottomMenu=new BottomMenu(LoginActivity.this,this);
+                bottomMenu.show();
+                break;
+            case btn_login:
+                final String userName = etUsername.getText().toString().trim();
+                final String password = etPassword.getText().toString().trim();
                 if (TextUtils.isEmpty(userName) || TextUtils.isEmpty(password)) {
                     ToastTool.getInstance().shortLength(context, "用户名或密码不能为空", true);
                     return;
@@ -98,6 +138,25 @@ public class LoginActivity extends BaseActivity implements ILoginView, View.OnCl
                 }
                 String deviceId = CommonUtil.getDeviceId(context);
                 loginPresenter.login(userName, password, deviceId);
+                break;
+            case btn_login_recorded:
+                final String userNameRecorded = tvUsername.getText().toString().trim();
+                final String passwordRecorded = etPasswordRecorded.getText().toString().trim();
+                if (TextUtils.isEmpty(passwordRecorded)) {
+                    ToastTool.getInstance().shortLength(context, "密码不能为空", true);
+                    return;
+                }
+
+                if (TextUtils.isEmpty(UrlManager.HOST_IP)
+                        || TextUtils.isEmpty(UrlManager.HOST_PORT)) {
+                    ToastTool.getInstance().shortLength(context, "请先设置ip和端口", true);
+                    return;
+                }
+                String deviceIdRecorded = CommonUtil.getDeviceId(context);
+                loginPresenter.login(userNameRecorded, passwordRecorded, deviceIdRecorded);
+                break;
+            case tv_ip:
+                ipSetManager.showSetIpDialog(LoginActivity.this, ipSetListener);
                 break;
         }
     }
@@ -132,15 +191,9 @@ public class LoginActivity extends BaseActivity implements ILoginView, View.OnCl
 
     @Override
     public void loginSuccessed(EntityUser entityUser) {
-        entityUser.setPassword(et_pword.getText().toString());//因为服务端没有返回用户密码，此操作为保存密码
+        entityUser.setPassword(etPassword.getText().toString());//因为服务端没有返回用户密码，此操作为保存密码
         //保存用户信息
         SharedTool.getInstance().saveUserInfo(LoginActivity.this, entityUser);
-
-        ///////////////////////////
-
-        ///////////////////////////
-
-
 
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         startActivity(intent);

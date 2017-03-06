@@ -18,7 +18,39 @@
             android:layout_height="match_parent"
             >
         </com.zondy.mapgis.android.mapview.MapView>
+        <RelativeLayout
+            android:layout_marginTop="15dp"
+            android:id="@+id/rl_search"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginLeft="7dp"
+            android:layout_marginRight="7dp"
+            android:background="@drawable/bg_sousuolan"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:gravity="center"
+            android:padding="3dp"
+            >
 
+            <EditText
+                android:id="@+id/et_search"
+                android:textSize="18sp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:background="@null"
+                android:hint="查找酒店、美食、加油站等"/>
+            <ImageView
+                android:id="@+id/iv_search"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="14dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_sousuo"/>
+
+        </RelativeLayout>
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab"
             android:layout_width="wrap_content"
@@ -78,7 +110,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="10dp"
             android:layout_weight="10"
             android:orientation="vertical">
 
